@@ -35,4 +35,10 @@ class Assignment extends Model
     {
         return now()->greaterThan($this->due_date);
     }
+    
+    // Get submission count for this assignment
+    public function getSubmissionsCountAttribute()
+    {
+        return $this->submissions()->count();
+    }
 }

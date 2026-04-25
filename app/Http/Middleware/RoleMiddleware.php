@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
@@ -16,17 +18,17 @@ class RoleMiddleware
     public function handle(Request $request, Closure $next, string $role): Response
     {
         // Check if user is authenticated
-        if (!auth()->check()) {
+        if (!Auth::check()) {
             return redirect()->route('login');
         }
 
         // Get the authenticated user
-        $user = auth()->user();
+        $user = Auth::user();
 
         // Check if user has the required role
         if ($user->role !== $role) {
             // Log for debugging
-            \Log::warning('Role mismatch', [
+            Log::warning('Role mismatch', [
                 'user_id' => $user->id,
                 'user_role' => $user->role,
                 'required_role' => $role,

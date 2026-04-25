@@ -29,7 +29,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         // Role-based redirect after login
-        $user = auth()->user();
+        $user = Auth::user();
 
         if ($user->isTeacher()) {
             return redirect()->intended(route('teacher.dashboard'));
@@ -43,11 +43,28 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // Get user before logout (for remember_token cleanup)
+        $user = Auth::user();
+        
+        // Logout the user
         Auth::guard('web')->logout();
 
+        // Invalidate the session (removes all session data)
         $request->session()->invalidate();
 
+        // Regenerate CSRF token
         $request->session()->regenerateToken();
+
+        // Clear the remember_token from database if "remember me" was used
+        if ($user && $user->remember_token) {
+            $user->setRememberToken(null);
+            $user->save();
+        }
+
+        // Force clear the session cookie by setting expiration to past
+        if ($request->hasCookie('laravel_session')) {
+            cookie()->queue(cookie()->forget('laravel_session'));
+        }
 
         return redirect('/');
     }

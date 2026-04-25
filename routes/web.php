@@ -18,6 +18,10 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:teacher'])->group(function () {
         Route::get('/teacher/dashboard', [DashboardController::class, 'teacherDashboard'])->name('teacher.dashboard');
         Route::resource('assignments', AssignmentController::class);
+        
+        // Teacher submission routes
+        Route::get('/teacher/submissions/history', [SubmissionController::class, 'allSubmissionsHistory'])->name('teacher.submissions.history');
+        Route::get('/teacher/submissions/{assignment}', [SubmissionController::class, 'showSubmissionsForTeacher'])->name('teacher.submissions');
     });
 
     // Student routes
