@@ -47,9 +47,9 @@ class RegisteredUserController extends Controller
 
         // 👇 Role-based redirect after registration
         if ($user->isTeacher()) {
-            return redirect()->route('dashboard'); // we'll customize this in dashboard step
+            return redirect('/dashboard'); // we'll customize this in dashboard step
         }
 
-        return redirect()->route('dashboard');
+        return redirect('/dashboard');
     }
 }
