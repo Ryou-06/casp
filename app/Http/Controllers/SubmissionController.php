@@ -35,20 +35,21 @@ class SubmissionController extends Controller
      * Show the form for creating a new submission.
      */
     public function create(Assignment $assignment)
-    {
-        // Check if assignment is past due
-        if ($assignment->isPastDue()) {
-            return redirect()->route('submissions.index')
-                ->with('error', 'This assignment is past due and cannot accept submissions.');
-        }
-        
-        // Check if student already submitted
-        $existingSubmission = Submission::where('assignment_id', $assignment->id)
-            ->where('student_id', Auth::id())
-            ->first();
-            
-        return view('submissions.create', compact('assignment', 'existingSubmission'));
+{
+    // Check if assignment is past due
+    if ($assignment->isPastDue()) {
+        return redirect()->route('submissions.index')
+            ->with('error', 'This assignment is past due and cannot accept submissions.');
     }
+
+    // Check if student already submitted
+    $existing = Submission::where('assignment_id', $assignment->id)
+        ->where('student_id', Auth::id())
+        ->first();
+
+    // Pass $existing to the view
+    return view('submissions.create', compact('assignment', 'existing'));
+}
 
     /**
      * Store a newly created submission in storage.
