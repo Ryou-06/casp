@@ -15,7 +15,13 @@
                 </div>
 
                 <!-- Stats Cards -->
-                <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <!-- Classrooms -->
+                    <div class="p-6 rounded-lg" style="background-color: #E6F1FB; border-left: 4px solid #185FA5;">
+                        <h4 class="font-semibold text-lg" style="color: #042C53;">My Classrooms</h4>
+                        <p class="text-3xl font-bold mt-2" style="color: #0C447C;">{{ $totalClassrooms }}</p>
+                        <p class="text-sm mt-1" style="color: #185FA5;">Total classrooms created</p>
+                    </div>
                     <!-- Assignments -->
                     <div class="p-6 rounded-lg" style="background-color: #E6F1FB; border-left: 4px solid #378ADD;">
                         <h4 class="font-semibold text-lg" style="color: #0C447C;">My Assignments</h4>
@@ -36,26 +42,6 @@
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
-                <div class="mt-8">
-                    <h4 class="font-semibold text-lg mb-4" style="color: #042C53;">Quick Actions</h4>
-                    <div class="flex gap-4">
-                        <a href="{{ route('assignments.create') }}"
-                           class="px-6 py-2 rounded-lg text-white font-medium transition-colors duration-150"
-                           style="background-color: #185FA5;"
-                           onmouseover="this.style.backgroundColor='#0C447C'"
-                           onmouseout="this.style.backgroundColor='#185FA5'">
-                            + Create Assignment
-                        </a>
-                        <a href="{{ route('assignments.index') }}"
-                           class="px-6 py-2 rounded-lg text-white font-medium transition-colors duration-150"
-                           style="background-color: #042C53;"
-                           onmouseover="this.style.backgroundColor='#0C447C'"
-                           onmouseout="this.style.backgroundColor='#042C53'">
-                            View All Assignments
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

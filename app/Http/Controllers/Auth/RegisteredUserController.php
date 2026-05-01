@@ -28,28 +28,23 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role'     => ['required', 'in:teacher,student'], // 👈 added
+            'role' => ['nullable', 'in:teacher,student'],
         ]);
 
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
+            'name' => $request->name,
+            'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role'     => $request->role, // 👈 added
+            'role' => $request->input('role', 'student'),
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        // 👇 Role-based redirect after registration
-        if ($user->isTeacher()) {
-            return redirect('/dashboard'); // we'll customize this in dashboard step
-        }
-
-        return redirect('/dashboard');
+        return redirect()->route('dashboard');
     }
 }

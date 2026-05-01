@@ -14,6 +14,24 @@
                         @method('PATCH')
 
                         <div class="mb-4">
+                            <label class="block text-gray-700 font-medium mb-1">Classroom</label>
+                            <select name="classroom_id" id="classroom_id"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select classroom</option>
+                                @foreach($classrooms as $classroom)
+                                    <option value="{{ $classroom->id }}"
+                                            data-subject="{{ $classroom->subject }}"
+                                            @selected(old('classroom_id', $assignment->classroom_id) == $classroom->id)>
+                                        {{ $classroom->name }}{{ $classroom->section ? ' - '.$classroom->section : '' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('classroom_id')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
                             <label class="block text-gray-700 font-medium mb-1">Title</label>
                             <input type="text" name="title" value="{{ old('title', $assignment->title) }}"
                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -24,7 +42,7 @@
 
                         <div class="mb-4">
                             <label class="block text-gray-700 font-medium mb-1">Subject</label>
-                            <input type="text" name="subject" value="{{ old('subject', $assignment->subject) }}"
+                            <input type="text" name="subject" id="subject" value="{{ old('subject', $assignment->subject) }}"
                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                             @error('subject')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -65,4 +83,24 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const classroomSelect = document.getElementById('classroom_id');
+        const subjectInput = document.getElementById('subject');
+
+        function syncSubjectFromClassroom() {
+            const subject = classroomSelect.options[classroomSelect.selectedIndex]?.dataset.subject || '';
+            if (subject) {
+                subjectInput.value = subject;
+            }
+            subjectInput.readOnly = Boolean(subject);
+            subjectInput.classList.toggle('bg-gray-100', Boolean(subject));
+        }
+
+        classroomSelect?.addEventListener('change', function () {
+            subjectInput.value = '';
+            syncSubjectFromClassroom();
+        });
+        syncSubjectFromClassroom();
+    </script>
 </x-app-layout>
