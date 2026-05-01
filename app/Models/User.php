@@ -66,6 +66,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Assignment::class, 'teacher_id');
     }
+
+    // Get all classrooms created by this teacher
+    public function classrooms()
+    {
+        return $this->hasMany(Classroom::class, 'teacher_id');
+    }
+
+    // Classrooms where this student is enrolled
+    public function enrolledClassrooms()
+    {
+        return $this->belongsToMany(Classroom::class, 'classroom_student', 'student_id', 'classroom_id')
+            ->withTimestamps();
+    }
     
     // Get all submissions made by this student
     public function submissions()

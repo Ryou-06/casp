@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Assignment;
+use App\Models\Classroom;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;  // Add this line at the top with other imports
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,7 @@ class AssignmentController extends Controller
     public function index()
     {
         $assignments = Assignment::where('teacher_id', Auth::id())
+            ->with('classroom')
             ->withCount('submissions')
             ->latest()
             ->paginate(10);
@@ -27,7 +29,9 @@ class AssignmentController extends Controller
      */
     public function create()
     {
-        return view('assignments.create');
+        $classrooms = Classroom::where('teacher_id', Auth::id())->orderBy('name')->get();
+
+        return view('assignments.create', compact('classrooms'));
     }
 
     /**
@@ -36,21 +40,32 @@ class AssignmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'classroom_id' => 'required|exists:classrooms,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'subject' => 'required|string|max:255',
+            'subject' => 'nullable|string|max:255',
             'due_date' => 'required|date|after:now',
         ]);
 
+        $classroom = Classroom::where('teacher_id', Auth::id())->findOrFail($request->classroom_id);
+        $subject = $classroom->subject ?: $request->subject;
+
+        if (! $subject) {
+            return back()
+                ->withErrors(['subject' => 'Add a subject to the classroom or provide one for this assignment.'])
+                ->withInput();
+        }
+
         Assignment::create([
             'teacher_id' => Auth::id(),
+            'classroom_id' => $classroom->id,
             'title' => $request->title,
             'description' => $request->description,
-            'subject' => $request->subject,
+            'subject' => $subject,
             'due_date' => $request->due_date,
         ]);
 
-        return redirect()->route('assignments.index')
+        return redirect()->route('classrooms.show', $classroom)
             ->with('success', 'Assignment created successfully!');
     }
 
@@ -77,7 +92,9 @@ class AssignmentController extends Controller
             abort(403);
         }
         
-        return view('assignments.edit', compact('assignment'));
+        $classrooms = Classroom::where('teacher_id', Auth::id())->orderBy('name')->get();
+
+        return view('assignments.edit', compact('assignment', 'classrooms'));
     }
 
     /**
@@ -91,13 +108,29 @@ class AssignmentController extends Controller
         }
         
         $request->validate([
+            'classroom_id' => 'required|exists:classrooms,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'subject' => 'required|string|max:255',
+            'subject' => 'nullable|string|max:255',
             'due_date' => 'required|date',
         ]);
 
-        $assignment->update($request->all());
+        $classroom = Classroom::where('teacher_id', Auth::id())->findOrFail($request->classroom_id);
+        $subject = $classroom->subject ?: $request->subject;
+
+        if (! $subject) {
+            return back()
+                ->withErrors(['subject' => 'Add a subject to the classroom or provide one for this assignment.'])
+                ->withInput();
+        }
+
+        $assignment->update([
+            'classroom_id' => $classroom->id,
+            'title' => $request->title,
+            'description' => $request->description,
+            'subject' => $subject,
+            'due_date' => $request->due_date,
+        ]);
 
         return redirect()->route('assignments.index')
             ->with('success', 'Assignment updated successfully!');

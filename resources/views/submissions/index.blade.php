@@ -25,6 +25,7 @@
                             <thead>
                                 <tr style="background-color: #042C53;">
                                     <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: #B5D4F4;">Title</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: #B5D4F4;">Classroom</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: #B5D4F4;">Subject</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: #B5D4F4;">Due Date</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: #B5D4F4;">Status</th>
@@ -37,6 +38,7 @@
                                         onmouseover="this.style.backgroundColor='#E6F1FB'"
                                         onmouseout="this.style.backgroundColor='transparent'">
                                         <td class="px-6 py-4 text-sm font-medium" style="color: #042C53;">{{ $assignment->title }}</td>
+                                        <td class="px-6 py-4 text-sm" style="color: #185FA5;">{{ $assignment->classroom?->name ?: 'N/A' }}</td>
                                         <td class="px-6 py-4 text-sm" style="color: #185FA5;">{{ $assignment->subject }}</td>
                                         <td class="px-6 py-4 text-sm">
                                             <span style="color: {{ $assignment->isPastDue() ? '#A32D2D' : '#185FA5' }}; font-weight: {{ $assignment->isPastDue() ? '600' : '400' }};">

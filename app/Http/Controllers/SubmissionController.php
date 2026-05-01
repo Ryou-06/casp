@@ -17,7 +17,10 @@ class SubmissionController extends Controller
     {
         $student = Auth::user();
         
-        $assignments = Assignment::with(['submissions' => function($query) use ($student) {
+        $assignments = Assignment::whereHas('classroom.students', function ($query) use ($student) {
+            $query->where('users.id', $student->id);
+        })
+        ->with(['classroom', 'submissions' => function($query) use ($student) {
             $query->where('student_id', $student->id);
         }])
         ->orderBy('due_date', 'asc')
@@ -36,6 +39,8 @@ class SubmissionController extends Controller
      */
     public function create(Assignment $assignment)
 {
+    $this->ensureStudentCanAccessAssignment($assignment);
+
     // Check if assignment is past due
     if ($assignment->isPastDue()) {
         return redirect()->route('submissions.index')
@@ -56,6 +61,8 @@ class SubmissionController extends Controller
      */
     public function store(Request $request, Assignment $assignment)
     {
+        $this->ensureStudentCanAccessAssignment($assignment);
+
         // Validate
         $request->validate([
             'file' => 'required|file|max:512000', // 500MB in KB
@@ -152,5 +159,24 @@ class SubmissionController extends Controller
         ->paginate(20);
         
         return view('submissions.history', compact('submissions'));
+    }
+
+    private function ensureStudentCanAccessAssignment(Assignment $assignment): void
+    {
+        $student = Auth::user();
+
+        if (! $assignment->classroom_id) {
+            abort(403, 'You are not enrolled in the classroom for this assignment.');
+        }
+
+        $isEnrolled = $assignment->classroom()
+            ->whereHas('students', function ($query) use ($student) {
+                $query->where('users.id', $student->id);
+            })
+            ->exists();
+
+        if (! $isEnrolled) {
+            abort(403, 'You are not enrolled in the classroom for this assignment.');
+        }
     }
 }

@@ -13,6 +13,27 @@
                         @csrf
 
                         <div class="mb-4">
+                            <label class="block text-gray-700 font-medium mb-1">Classroom</label>
+                            <select name="classroom_id" id="classroom_id"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select classroom</option>
+                                @foreach($classrooms as $classroom)
+                                    <option value="{{ $classroom->id }}"
+                                            data-subject="{{ $classroom->subject }}"
+                                            @selected(old('classroom_id', request('classroom_id')) == $classroom->id)>
+                                        {{ $classroom->name }}{{ $classroom->section ? ' - '.$classroom->section : '' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('classroom_id')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                            @if($classrooms->isEmpty())
+                                <p class="text-sm mt-1" style="color: #A32D2D;">Create a classroom first before posting an activity.</p>
+                            @endif
+                        </div>
+
+                        <div class="mb-4">
                             <label class="block text-gray-700 font-medium mb-1">Title</label>
                             <input type="text" name="title" value="{{ old('title') }}"
                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -24,9 +45,9 @@
 
                         <div class="mb-4">
                             <label class="block text-gray-700 font-medium mb-1">Subject</label>
-                            <input type="text" name="subject" value="{{ old('subject') }}"
+                            <input type="text" name="subject" id="subject" value="{{ old('subject') }}"
                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   placeholder="e.g. Mathematics, Science">
+                                   placeholder="Auto-filled from selected classroom">
                             @error('subject')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -53,17 +74,36 @@
 
                         <div class="flex gap-3">
                             <button type="submit"
-                                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition"
+                                    @disabled($classrooms->isEmpty())>
                                 Create Assignment
                             </button>
-                            <a href="{{ route('assignments.index') }}"
-                               class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-lg transition">
-                                Cancel
-                            </a>
+<a href="{{ route('classrooms.show', $classroom_id ?? request('classroom_id')) }}"
+   class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-lg transition">
+    Cancel
+</a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        const classroomSelect = document.getElementById('classroom_id');
+        const subjectInput = document.getElementById('subject');
+
+        function syncSubjectFromClassroom() {
+            const subject = classroomSelect.options[classroomSelect.selectedIndex]?.dataset.subject || '';
+            subjectInput.value = subject || subjectInput.value;
+            subjectInput.readOnly = Boolean(subject);
+            subjectInput.classList.toggle('bg-gray-100', Boolean(subject));
+        }
+
+        classroomSelect?.addEventListener('change', function () {
+            subjectInput.value = '';
+            syncSubjectFromClassroom();
+        });
+        syncSubjectFromClassroom();
+    </script>
 </x-app-layout>

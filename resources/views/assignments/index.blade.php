@@ -12,16 +12,6 @@
                 
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-lg font-semibold">Assignment List</h3>
-                    <div class="flex gap-3">
-                        <a href="{{ route('teacher.submissions.history') }}" 
-                           class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">
-                            View All Submissions
-                        </a>
-                        <a href="{{ route('assignments.create') }}" 
-                           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
-                            + Create Assignment
-                        </a>
-                    </div>
                 </div>
 
                 @if(session('success'))
@@ -44,6 +34,7 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Classroom</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submissions</th>
@@ -57,6 +48,9 @@
                                         <td class="px-6 py-4">
                                             <div class="text-sm font-medium text-gray-900">{{ $assignment->title }}</div>
                                             <div class="text-sm text-gray-500">{{ Str::limit($assignment->description, 50) }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $assignment->classroom?->name ?: 'No classroom' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $assignment->subject }}
@@ -85,8 +79,6 @@
                                             <div class="flex gap-3">
                                                 <a href="{{ route('assignments.edit', $assignment) }}" 
                                                    class="text-yellow-600 hover:text-yellow-900">Edit</a>
-                                                <a href="{{ route('teacher.submissions', $assignment) }}" 
-                                                   class="text-green-600 hover:text-green-900">Submissions</a>
                                                 <form action="{{ route('assignments.destroy', $assignment) }}" 
                                                       method="POST" 
                                                       onsubmit="return confirm('Delete this assignment? All submissions will also be deleted.')">
