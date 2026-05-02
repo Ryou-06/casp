@@ -1,57 +1,290 @@
 <x-app-layout>
+
     <x-slot name="header">
-        <h2 class="font-semibold text-xl leading-tight" style="color: #042C53;">
-            {{ $classroom->name }}
-        </h2>
+
+        <div class="flex justify-between items-center">
+
+            <div>
+
+                <h2 class="font-bold text-2xl leading-tight" style="color: #042C53;">
+
+                    {{ $classroom->name }}
+
+                </h2>
+
+            
+
+            </div>
+
+           
+
+            {{-- Restored Button with updated text --}}
+
+            <a href="{{ route('student.classrooms.index') }}"
+
+               class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+
+               style="background-color: #E6F1FB; color: #185FA5;"
+
+               onmouseover="this.style.backgroundColor='#B5D4F4'; this.style.transform='translateX(-2px)'"
+
+               onmouseout="this.style.backgroundColor='#E6F1FB'; this.style.transform='translateX(0)'">
+
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+
+                </svg>
+
+                Back to Classrooms
+
+            </a>
+
+        </div>
+
     </x-slot>
 
+
+
     <div class="w-full" style="background-color: #F4F7FB; min-height: 100vh; padding: 1.5rem;">
+
         <div class="max-w-5xl mx-auto space-y-6">
-            <div class="overflow-hidden sm:rounded-lg" style="background-color: #fff; border: 0.5px solid #B5D4F4;">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold" style="color: #042C53;">{{ $classroom->name }}</h3>
-                    <p class="text-sm mt-1" style="color: #185FA5;">Section: {{ $classroom->section ?: 'N/A' }}</p>
-                    <p class="text-sm mt-1" style="color: #185FA5;">Subject: {{ $classroom->subject ?: 'N/A' }}</p>
-                    @if($classroom->description)
-                        <p class="text-sm mt-3" style="color: #4B5563;">{{ $classroom->description }}</p>
-                    @endif
+
+           
+
+            {{-- Teacher Stats Overview --}}
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                <div class="p-5 rounded-xl bg-white border border-gray-200 shadow-sm">
+
+                    <p class="text-xs font-bold uppercase tracking-widest text-gray-400">Total Activities</p>
+
+                    <p class="text-2xl font-black" style="color: #042C53;">{{ $classroom->assignments->count() }}</p>
+
                 </div>
+
+                <div class="p-5 rounded-xl bg-white border border-gray-200 shadow-sm">
+
+                    <p class="text-xs font-bold uppercase tracking-widest text-gray-400">Subject</p>
+
+                    <p class="text-2xl font-black" style="color: #185FA5;">{{ $classroom->subject ?: 'General' }}</p>
+
+                </div>
+
+                <div class="p-5 rounded-xl bg-white border border-gray-200 shadow-sm">
+
+                    <p class="text-xs font-bold uppercase tracking-widest text-gray-400">Section</p>
+
+                    <p class="text-2xl font-black" style="color: #378ADD;">{{ $classroom->section ?: 'N/A' }}</p>
+
+                </div>
+
             </div>
 
-            <div class="overflow-hidden sm:rounded-lg" style="background-color: #fff; border: 0.5px solid #B5D4F4;">
+
+
+            {{-- Classroom Info Card --}}
+
+            <div class="overflow-hidden sm:rounded-xl transition-all duration-300 shadow-sm"
+
+                 style="background-color: #fff; border: 1px solid #E5E7EB;">
+
+                <div class="relative">
+
+                    <div class="h-1.5" style="background: linear-gradient(90deg, #185FA5 0%, #378ADD 100%);"></div>
+
+                   
+
+                    <div class="p-6">
+
+                        <div class="flex items-start justify-between">
+
+                            <div class="flex-1">
+
+                                <div class="flex items-center gap-4">
+
+                                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner"
+
+                                         style="background-color: #F0F7FF;">
+
+                                        <svg class="w-8 h-8" style="color: #185FA5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
+
+                                        </svg>
+
+                                    </div>
+
+                                    <div>
+
+                                        <h3 class="text-xl font-extrabold" style="color: #042C53;">Class Details</h3>
+
+                                        <p class="text-sm" style="color: #6B7280;">{{ $classroom->description ?: 'No description provided for this classroom.' }}</p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            {{-- Activities Management Card --}}
+
+            <div class="overflow-hidden sm:rounded-xl shadow-sm"
+
+                 style="background-color: #fff; border: 1px solid #E5E7EB;">
+
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold mb-4" style="color: #042C53;">Activities</h3>
+
+                    <div class="flex items-center justify-between mb-6">
+
+                        <div class="flex items-center gap-2">
+
+                            <div class="p-2 rounded-lg" style="background-color: #E6F1FB;">
+
+                                <svg class="w-5 h-5" style="color: #185FA5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+
+                                </svg>
+
+                            </div>
+
+                            <h3 class="text-lg font-bold" style="color: #042C53;">Assignment List</h3>
+
+                        </div>
+
+                    </div>
+
+
 
                     @if($classroom->assignments->isEmpty())
-                        <div class="text-center py-10 rounded-lg" style="background-color: #E6F1FB; color: #185FA5;">
-                            No activities posted yet.
+
+                        <div class="text-center py-12 rounded-xl border-2 border-dashed border-gray-100" style="background-color: #FAFCFF;">
+
+                            <p class="font-medium text-gray-400">No activities have been created yet.</p>
+
                         </div>
+
                     @else
-                        <div class="space-y-3">
+
+                        <div class="space-y-4">
+
                             @foreach($classroom->assignments as $assignment)
-                                <div class="p-4 rounded-lg" style="background-color: #F4F7FB; border: 0.5px solid #B5D4F4;">
-                                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                        <div>
-                                            <p class="font-semibold" style="color: #042C53;">{{ $assignment->title }}</p>
-                                            <p class="text-sm" style="color: #185FA5;">Due: {{ $assignment->due_date->format('M d, Y h:i A') }}</p>
-                                            <p class="text-sm mt-2" style="color: #4B5563;">{{ Str::limit($assignment->description, 120) }}</p>
+
+                                <div class="group p-5 rounded-xl transition-all duration-200 border border-gray-100 hover:border-blue-200 hover:shadow-md bg-white">
+
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+                                        <div class="flex-1">
+
+                                            <div class="flex items-center gap-3">
+
+                                                <div class="w-2 h-10 rounded-full" style="background-color: {{ $assignment->isPastDue() ? '#EF4444' : '#10B981' }}"></div>
+
+                                                <div>
+
+                                                    <h4 class="font-bold text-gray-800 text-lg group-hover:text-blue-700 transition-colors">
+
+                                                        {{ $assignment->title }}
+
+                                                    </h4>
+
+                                                    <div class="flex items-center gap-4 mt-1">
+
+                                                        <span class="flex items-center gap-1 text-xs font-medium text-gray-500">
+
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+
+                                                            </svg>
+
+                                                            Due: {{ $assignment->due_date->format('M d, Y h:i A') }}
+
+                                                        </span>
+
+                                                        <span class="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-md font-bold"
+
+                                                              style="background-color: {{ $assignment->isPastDue() ? '#FEE2E2' : '#D1FAE5' }};
+
+                                                                     color: {{ $assignment->isPastDue() ? '#991B1B' : '#065F46' }};">
+
+                                                            {{ $assignment->isPastDue() ? 'Closed' : 'Active' }}
+
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
                                         </div>
-                                        @if(!$assignment->isPastDue())
+
+                                       
+
+                                        <div class="flex items-center gap-2 shrink-0">
+
                                             <a href="{{ route('submissions.create', $assignment) }}"
-                                               class="inline-flex items-center justify-center px-4 py-2 rounded-lg text-white text-sm font-medium"
-                                               style="background-color: #185FA5;">
-                                                Submit
+
+                                               class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200"
+
+                                               style="background-color: #F3F4F6; color: #374151;"
+
+                                               onmouseover="this.style.backgroundColor='#E5E7EB'"
+
+                                               onmouseout="this.style.backgroundColor='#F3F4F6'">
+
+                                                View Task
+
                                             </a>
-                                        @else
-                                            <span class="text-xs px-2 py-1 rounded" style="background-color: #FCEBEB; color: #A32D2D;">Closed</span>
-                                        @endif
+
+                                           
+
+                                            @if(!$assignment->isPastDue())
+
+                                                <div class="p-2 rounded-lg bg-green-50 text-green-600">
+
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+
+                                                    </svg>
+
+                                                </div>
+
+                                            @endif
+
+                                        </div>
+
                                     </div>
+
                                 </div>
+
                             @endforeach
+
                         </div>
+
                     @endif
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 </x-app-layout>
+
