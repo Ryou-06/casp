@@ -1,59 +1,317 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Classroom Assignment Submission Portal
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel-based classroom assignment submission system for teachers and students. The portal lets teachers create classrooms, enroll registered students, post activities with instructions and deadlines, and review submitted files. Students can view their enrolled classrooms, open activities, upload files, and replace previous submissions without creating duplicate records.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Role-based authentication using Laravel Breeze
+- Teacher and student access control through middleware
+- Teacher classroom management
+- Student enrollment per classroom
+- Assignment/activity CRUD for teachers
+- Activity instructions, subject, and deadline fields
+- Student classroom dashboard
+- Student file upload and re-upload
+- Duplicate prevention using one submission per student per assignment
+- Teacher submission history per assignment
+- File size display and submission timestamps
+- Late/on-time submission indicators
+- MySQL database with Eloquent relationships and migrations
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## User Roles
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Teacher
 
-## Learning Laravel
+- Create and manage classrooms
+- Add registered students to classrooms
+- Create activities for a classroom
+- Add activity instructions and deadline
+- View submitted files per activity
+- Download student submissions
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Student
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- View enrolled classrooms
+- Open classroom activities
+- Read activity instructions
+- Upload assignment files
+- Re-upload to replace a previous submission
+- See success messages after upload
 
-## Laravel Sponsors
+## Tech Stack
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- Laravel 12
+- Laravel Breeze
+- MySQL
+- Blade templates
+- Tailwind CSS / Vite
+- Eloquent ORM
+- Laravel Storage facade
 
-### Premium Partners
+## Database Schema Overview
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```mermaid
+erDiagram
+    USERS ||--o{ CLASSROOMS : teaches
+    USERS ||--o{ SUBMISSIONS : uploads
+    CLASSROOMS ||--o{ ASSIGNMENTS : contains
+    CLASSROOMS ||--o{ CLASSROOM_STUDENT : enrolls
+    USERS ||--o{ CLASSROOM_STUDENT : joins
+    ASSIGNMENTS ||--o{ SUBMISSIONS : receives
 
-## Contributing
+    USERS {
+        bigint id
+        string name
+        string email
+        string password
+        enum role
+    }
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    CLASSROOMS {
+        bigint id
+        bigint teacher_id
+        string name
+        string section
+        string subject
+        text description
+    }
 
-## Code of Conduct
+    CLASSROOM_STUDENT {
+        bigint id
+        bigint classroom_id
+        bigint student_id
+    }
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    ASSIGNMENTS {
+        bigint id
+        bigint teacher_id
+        bigint classroom_id
+        string title
+        text description
+        string subject
+        datetime due_date
+    }
 
-## Security Vulnerabilities
+    SUBMISSIONS {
+        bigint id
+        bigint assignment_id
+        bigint student_id
+        string file_path
+        string file_name
+        integer file_size
+        timestamp submitted_at
+    }
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### users
 
-## License
+Stores teacher and student accounts.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- id
+- name
+- email
+- password
+- role: `teacher` or `student`
+
+### classrooms
+
+Stores classrooms created by teachers.
+
+- id
+- teacher_id
+- name
+- section
+- subject
+- description
+
+### classroom_student
+
+Pivot table for student classroom enrollment.
+
+- id
+- classroom_id
+- student_id
+
+### assignments
+
+Stores posted activities or assignments.
+
+- id
+- teacher_id
+- classroom_id
+- title
+- description
+- subject
+- due_date
+
+### submissions
+
+Stores uploaded student files.
+
+- id
+- assignment_id
+- student_id
+- file_path
+- file_name
+- file_size
+- submitted_at
+
+The `submissions` table has a unique constraint on `assignment_id` and `student_id`, so a student can only have one active submission per assignment. Re-uploading replaces the previous file.
+
+## Setup Instructions
+
+1. Clone the repository.
+
+```bash
+git clone <repository-url>
+cd casp
+```
+
+2. Install PHP dependencies.
+
+```bash
+composer install
+```
+
+3. Install frontend dependencies.
+
+```bash
+npm install
+```
+
+4. Copy the environment file.
+
+```bash
+copy .env.example .env
+```
+
+5. Generate the application key.
+
+```bash
+php artisan key:generate
+```
+
+6. Configure MySQL in `.env`.
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=casp
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+7. Run migrations and seeders.
+
+```bash
+php artisan migrate --seed
+```
+
+8. Link storage for uploaded files.
+
+```bash
+php artisan storage:link
+```
+
+9. Build frontend assets.
+
+```bash
+npm run build
+```
+
+10. Start the Laravel development server.
+
+```bash
+php artisan serve
+```
+
+Open the app at:
+
+```text
+http://127.0.0.1:8000
+```
+
+## Demo Accounts
+
+After running `php artisan migrate --seed`, these accounts are available:
+
+```text
+Teacher
+Email: teacher@example.com
+Password: password
+
+Student
+Email: student@example.com
+Password: password
+
+Student 2
+Email: student2@example.com
+Password: password
+```
+
+## File Upload Rules
+
+Accepted file types:
+
+- PDF
+- Word documents
+- Excel files
+- PowerPoint files
+- TXT
+- ZIP / RAR
+- JPG / JPEG / PNG
+
+Maximum upload size:
+
+```text
+500 MB
+```
+
+Server settings such as `upload_max_filesize` and `post_max_size` must also allow large uploads.
+
+## Project Scope
+
+Included:
+
+- Assignment posting and management
+- Classroom-based student access
+- File upload submissions
+- Submission tracking and timestamps
+- Role-based teacher/student views
+- File validation
+
+Not included:
+
+- Grading
+- Teacher feedback or annotations
+- Plagiarism detection
+- Cloud storage integration
+- Email notifications
+
+## Running Tests
+
+```bash
+php artisan test
+```
+
+## Group Members
+
+- Member 1:John Ron B. Diza
+- Member 2:Stephany M. Galo
+- Member 3:Paul Batac
+- Member 4:Justine Jhess Domenden
+- Member 5:Aldrey Butalid
+## Notes for Live Demo
+
+Recommended demo flow:
+
+1. Log in as teacher.
+2. Create a classroom.
+3. Add registered students to the classroom.
+4. Create an activity with instructions and deadline.
+5. Log in as student.
+6. Open the classroom.
+7. Submit a file.
+8. Log back in as teacher.
+9. Open the classroom activity submissions and download the submitted file.

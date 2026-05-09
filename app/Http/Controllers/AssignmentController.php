@@ -42,7 +42,7 @@ class AssignmentController extends Controller
         $request->validate([
             'classroom_id' => 'required|exists:classrooms,id',
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'subject' => 'nullable|string|max:255',
             'due_date' => 'required|date|after:now',
         ]);
@@ -110,7 +110,7 @@ class AssignmentController extends Controller
         $request->validate([
             'classroom_id' => 'required|exists:classrooms,id',
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'subject' => 'nullable|string|max:255',
             'due_date' => 'required|date',
         ]);
@@ -132,7 +132,7 @@ class AssignmentController extends Controller
             'due_date' => $request->due_date,
         ]);
 
-        return redirect()->route('assignments.index')
+        return redirect()->route('classrooms.show', $assignment->classroom)
             ->with('success', 'Assignment updated successfully!');
     }
 
@@ -153,9 +153,12 @@ class AssignmentController extends Controller
             }
         }
         
+        $classroom = $assignment->classroom;
+
         $assignment->delete();
         
-        return redirect()->route('assignments.index')
-            ->with('success', 'Assignment deleted successfully.');
+        return $classroom
+            ? redirect()->route('classrooms.show', $classroom)->with('success', 'Assignment deleted successfully.')
+            : redirect()->route('assignments.index')->with('success', 'Assignment deleted successfully.');
     }
 }

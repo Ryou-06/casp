@@ -50,8 +50,9 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="block text-gray-700 font-medium mb-1">Description / Instructions</label>
+                            <label class="block text-gray-700 font-medium mb-1">Activity Instructions</label>
                             <textarea name="description" rows="5"
+                                      placeholder="Provide clear instructions for this activity..."
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('description', $assignment->description) }}</textarea>
                             @error('description')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -73,7 +74,7 @@
                                     class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
                                 Update Assignment
                             </button>
-                            <a href="{{ route('assignments.index') }}"
+                            <a href="{{ $assignment->classroom ? route('classrooms.show', $assignment->classroom) : route('classrooms.index') }}"
                                class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-lg transition">
                                 Cancel
                             </a>

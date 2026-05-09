@@ -50,6 +50,12 @@
 
         <div class="max-w-5xl mx-auto space-y-6">
 
+            @if(session('success'))
+                <div class="px-4 py-3 rounded-lg text-sm" style="background-color: #E1F5EE; border: 1px solid #1D9E75; color: #085041;">
+                    {{ session('success') }}
+                </div>
+            @endif
+
            
 
             {{-- Teacher Stats Overview --}}
@@ -287,4 +293,3 @@
     </div>
 
 </x-app-layout>
-

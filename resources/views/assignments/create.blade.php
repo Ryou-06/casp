@@ -117,7 +117,7 @@
                                 Create Assignment
                             </button>
                             
-                            <a href="{{ route('classrooms.show', $classroom_id ?? request('classroom_id')) }}"
+                            <a href="{{ request('classroom_id') ? route('classrooms.show', request('classroom_id')) : route('classrooms.index') }}"
                                class="px-6 py-3 rounded-xl font-bold transition-all text-gray-500 hover:bg-gray-100 text-sm">
                                 Cancel
                             </a>

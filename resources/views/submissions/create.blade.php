@@ -15,7 +15,7 @@
                 </div>
             </div>
             
-            <a href="{{ route('classrooms.student_show', $assignment->classroom_id) }}"
+            <a href="{{ route('student.classrooms.show', $assignment->classroom) }}"
                class="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 bg-white border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-300">
                 <svg class="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -39,7 +39,7 @@
                                 @if($assignment->isPastDue())
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-red-50 text-red-600 border border-red-100">
                                         <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-                                        Past Due
+                                        Past Due - Late Submissions Allowed
                                     </span>
                                 @else
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-100">
@@ -95,16 +95,34 @@
                             <div class="h-px flex-1 bg-gray-100"></div>
                         </div>
 
-                        @if($existing)
-                            <div class="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 flex gap-3">
-                                <svg class="w-5 h-5 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {{-- LATE SUBMISSION WARNING --}}
+                        @if($isPastDue && !$existing)
+                            <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 flex gap-3">
+                                <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                                 </svg>
                                 <div>
-                                    <p class="text-xs font-bold text-amber-800 uppercase">Active Submission</p>
-                                    <p class="text-sm text-amber-700 font-medium mt-1">"{{ $existing->file_name }}"</p>
-                                    <p class="text-[10px] text-amber-600 mt-1 uppercase tracking-tighter font-bold">
-                                        Sent: {{ $existing->submitted_at->format('M d, Y • h:i A') }}
+                                    <p class="text-xs font-black text-red-800 uppercase">⚠️ Late Submission Warning</p>
+                                    <p class="text-sm text-red-700 font-medium mt-1">This assignment is past the deadline.</p>
+                                    <p class="text-[11px] text-red-600 mt-1 font-bold">Your submission will be marked as <span class="underline">LATE</span> and visible to your teacher.</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- EXISTING SUBMISSION INFO WITH LATE STATUS --}}
+                        @if($existing)
+                            <div class="mb-6 p-4 rounded-xl {{ $existing->is_late ? 'bg-red-50 border-red-200' : 'bg-amber-50 border-amber-200' }} border flex gap-3">
+                                <svg class="w-5 h-5 {{ $existing->is_late ? 'text-red-500' : 'text-amber-500' }} shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                                <div>
+                                    <p class="text-xs font-bold {{ $existing->is_late ? 'text-red-800' : 'text-amber-800' }} uppercase">Current Submission</p>
+                                    <p class="text-sm {{ $existing->is_late ? 'text-red-700' : 'text-amber-700' }} font-medium mt-1">"{{ $existing->file_name }}"</p>
+                                    <p class="text-[10px] {{ $existing->is_late ? 'text-red-600' : 'text-amber-600' }} mt-1 uppercase tracking-tighter font-bold">
+                                        Submitted: {{ $existing->submitted_at->format('M d, Y • h:i A') }}
+                                        @if($existing->is_late)
+                                            <span class="ml-2 px-1.5 py-0.5 rounded bg-red-200 text-red-800">LATE</span>
+                                        @endif
                                     </p>
                                 </div>
                             </div>
@@ -151,7 +169,7 @@
                                         class="flex-[2] px-6 py-3 rounded-xl text-white text-xs font-black uppercase tracking-widest transition-all duration-300 bg-blue-600 hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 shadow-md">
                                     {{ $existing ? 'Update My Work' : 'Hand In Assignment' }}
                                 </button>
-                                <a href="{{ route('classrooms.student_show', $assignment->classroom_id) }}"
+                                <a href="{{ route('student.classrooms.show', $assignment->classroom) }}"
                                    class="flex-1 px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all text-center bg-gray-50 text-gray-500 hover:bg-gray-100 border border-gray-100">
                                     Cancel
                                 </a>

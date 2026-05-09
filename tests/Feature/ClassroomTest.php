@@ -97,7 +97,7 @@ test('student only sees assignments from enrolled classrooms', function () {
         'due_date' => now()->addDay(),
     ]);
 
-    $response = $this->actingAs($student)->get(route('submissions.index'));
+    $response = $this->actingAs($student)->get(route('student.classrooms.show', $enrolledClassroom));
 
     $response->assertOk();
     $response->assertSee($visibleAssignment->title);

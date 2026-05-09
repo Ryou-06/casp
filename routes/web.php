@@ -43,9 +43,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/submissions/{assignment}', [SubmissionController::class, 'store'])->name('submissions.store');
     });
 
-    // For students to view a specific classroom
-Route::get('/classroom/{classroom}/student-show', [ClassroomController::class, 'studentShow'])->name('classrooms.student_show');
-
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

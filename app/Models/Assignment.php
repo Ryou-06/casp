@@ -47,4 +47,13 @@ class Assignment extends Model
     {
         return $this->submissions()->count();
     }
+    //Late Submission
+    public function isSubmissionLate($submittedAt)
+{
+    if (!$this->due_date) {
+        return false; // No deadline means never late
+    }
+    
+    return $submittedAt->gt($this->due_date);
+}
 }

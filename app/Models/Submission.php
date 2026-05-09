@@ -48,4 +48,28 @@ class Submission extends Model
         
         return round($size, 2) . ' ' . $units[$i];
     }
+
+    // In App\Models\Submission.php
+
+// Add this accessor after the getFormattedFileSizeAttribute method
+public function getIsLateAttribute()
+{
+    if (!$this->assignment || !$this->assignment->due_date) {
+        return false;
+    }
+    
+    return $this->submitted_at->gt($this->assignment->due_date);
+}
+
+// Add this to get late status text
+public function getLateStatusAttribute()
+{
+    return $this->is_late ? 'Late' : 'On Time';
+}
+
+// Add this for styling
+public function getLateStatusClassAttribute()
+{
+    return $this->is_late ? 'text-red-600 bg-red-50' : 'text-green-600 bg-green-50';
+}
 }
