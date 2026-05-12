@@ -24,6 +24,20 @@
                     Dashboard
                 </a>
 
+                <!-- Account Settings -->
+                <a href="{{ route('profile.edit') }}"
+                   class="flex items-center px-4 py-3 rounded-lg transition-colors duration-150"
+                   style="{{ request()->routeIs('profile.edit')
+                      ? 'background-color: #185FA5; color: white;'
+                      : 'color: #B5D4F4;' }}"
+                   onmouseover="{{ !request()->routeIs('profile.edit') ? 'this.style.backgroundColor=\"#0C447C\"' : '' }}"
+                   onmouseout="{{ !request()->routeIs('profile.edit') ? 'this.style.backgroundColor=\"transparent\"' : '' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                    </svg>
+                    Change Password
+                </a>
+
                 <!-- My Classrooms -->
                 {{-- <a href="{{ route('student.classrooms.index') }}" 
                    class="flex items-center px-4 py-3 rounded-lg transition-colors duration-150"

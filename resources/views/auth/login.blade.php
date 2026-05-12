@@ -57,17 +57,10 @@
             </x-primary-button>
         </div>
 
-        {{-- Register Link --}}
+        {{-- Account Notice --}}
         <div class="mt-5 text-center pt-4" style="border-top: 1px solid #B5D4F4;">
             <p class="text-sm" style="color: #185FA5;">
-                Don't have an account yet?
-                <a href="{{ route('register') }}"
-                   class="font-semibold underline ms-1"
-                   style="color: #042C53;"
-                   onmouseover="this.style.color='#185FA5'"
-                   onmouseout="this.style.color='#042C53'">
-                    Register here
-                </a>
+                Student accounts are created by the teacher/admin. Ask your teacher for your login credentials.
             </p>
         </div>
     </form>

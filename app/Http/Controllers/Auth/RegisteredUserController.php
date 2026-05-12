@@ -3,48 +3,26 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
     /**
-     * Display the registration view.
+     * Public self-registration is disabled for this school demo.
+     * Student accounts are created by the teacher/admin.
      */
-    public function create(): View
+    public function create(): RedirectResponse
     {
-        return view('auth.register');
+        return redirect()->route('login')
+            ->with('status', 'Student accounts are created by the teacher/admin. Please ask your teacher for your login credentials.');
     }
 
     /**
-     * Handle an incoming registration request.
+     * Block direct registration attempts so users cannot choose their own role.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['nullable', 'in:teacher,student'],
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->input('role', 'student'),
-        ]);
-
-        event(new Registered($user));
-
-        Auth::login($user);
-
-        return redirect()->route('dashboard');
+        return redirect()->route('login')
+            ->with('status', 'Registration is handled by the teacher/admin.');
     }
 }

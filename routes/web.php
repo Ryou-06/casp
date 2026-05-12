@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\StudentAccountController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -23,6 +24,8 @@ Route::middleware(['auth'])->group(function () {
     // Teacher routes
     Route::middleware(['role:teacher'])->group(function () {
         Route::get('/teacher/dashboard', [DashboardController::class, 'teacherDashboard'])->name('teacher.dashboard');
+        Route::get('/students/create', [StudentAccountController::class, 'create'])->name('students.create');
+        Route::post('/students', [StudentAccountController::class, 'store'])->name('students.store');
         Route::post('/classrooms/{classroom}/students', [ClassroomController::class, 'addStudent'])->name('classrooms.students.store');
         Route::delete('/classrooms/{classroom}/students/{student}', [ClassroomController::class, 'removeStudent'])->name('classrooms.students.destroy');
         Route::resource('classrooms', ClassroomController::class);

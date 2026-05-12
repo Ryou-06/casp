@@ -21,8 +21,12 @@
                          style="background: linear-gradient(135deg, #E6F1FB 0%, #f0f7ff 100%); border-left: 5px solid #185FA5;">
                         <h3 class="text-xl font-bold" style="color: #042C53;">Welcome back, {{ $user->name }}! 👋</h3>
                         <p class="mt-1 text-sm font-medium" style="color: #185FA5;">
-                            You are currently managing your portal as a <span class="px-2 py-0.5 rounded bg-white border border-blue-200" style="color: #0C447C;">Teacher</span>
+                            You are currently managing your portal as the <span class="px-2 py-0.5 rounded bg-white border border-blue-200" style="color: #0C447C;">Teacher/Admin</span>
                         </p>
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <a href="{{ route('students.create') }}" class="px-4 py-2 rounded-lg text-white text-sm font-bold" style="background-color: #185FA5;">Create Student Account</a>
+                            <a href="{{ route('classrooms.create') }}" class="px-4 py-2 rounded-lg text-sm font-bold border" style="color: #185FA5; border-color: #185FA5;">Create Classroom</a>
+                        </div>
                     </div>
 
                     <!-- Stats Cards: Added Hover Effects and Spacing -->
