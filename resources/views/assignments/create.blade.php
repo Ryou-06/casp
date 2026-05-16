@@ -35,7 +35,7 @@
 
                 <!-- Scrollable Form Body -->
                 <div class="p-6 overflow-y-auto custom-scrollbar bg-gray-50/30">
-                    <form action="{{ route('assignments.store') }}" method="POST">
+                    <form action="{{ route('assignments.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="space-y-5">
@@ -101,8 +101,20 @@
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider mb-2" style="color: #042C53;">Deadline</label>
                                 <input type="datetime-local" name="due_date" value="{{ old('due_date') }}"
+                                       min="{{ now()->addMinute()->format('Y-m-d\TH:i') }}"
                                        class="w-full border-gray-200 rounded-xl focus:ring-2 focus:ring-[#185FA5] focus:border-[#185FA5] shadow-sm text-sm">
                                 @error('due_date')
+                                    <p class="text-red-500 text-xs mt-1 font-bold">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Optional Attachment -->
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider mb-2" style="color: #042C53;">Activity File <span class="text-gray-400">(optional)</span></label>
+                                <input type="file" name="attachment"
+                                       class="w-full border-gray-200 rounded-xl focus:ring-2 focus:ring-[#185FA5] focus:border-[#185FA5] shadow-sm text-sm bg-white file:mr-4 file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-bold file:text-blue-700">
+                                <p class="text-[11px] text-gray-400 mt-1">PDF, Word, PowerPoint, Excel, text, ZIP/RAR, or image files up to 500MB.</p>
+                                @error('attachment')
                                     <p class="text-red-500 text-xs mt-1 font-bold">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -110,7 +122,11 @@
 
                         <!-- Actions -->
                         <div class="mt-8 pt-6 border-t border-gray-100 flex items-center gap-3">
-                            <button type="submit"
+                            <button type="button"
+                                    data-confirm-form
+                                    data-confirm-title="Create assignment?"
+                                    data-confirm-message="Please confirm that the assignment details and deadline are correct."
+                                    data-confirm-button="Create Assignment"
                                     class="flex-1 px-6 py-3 rounded-xl text-white font-bold transition-all duration-200 shadow-md hover:brightness-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                                     style="background-color: #185FA5;"
                                     @disabled($classrooms->isEmpty())>

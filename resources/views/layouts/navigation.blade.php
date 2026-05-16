@@ -43,8 +43,11 @@
                             @csrf
 
                             <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
+                                    data-confirm-form
+                                    data-confirm-title="Log out?"
+                                    data-confirm-message="You are about to end your CASP session."
+                                    data-confirm-button="Log Out"
+                                    onclick="event.preventDefault();">
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
                         </form>
@@ -89,8 +92,11 @@
                     @csrf
 
                     <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
+                            data-confirm-form
+                            data-confirm-title="Log out?"
+                            data-confirm-message="You are about to end your CASP session."
+                            data-confirm-button="Log Out"
+                            onclick="event.preventDefault();">
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>
                 </form>

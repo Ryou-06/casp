@@ -48,7 +48,13 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            <x-primary-button type="button"
+                              data-confirm-form
+                              data-confirm-title="Update profile?"
+                              data-confirm-message="This will save changes to your profile information."
+                              data-confirm-button="Save Profile">
+                {{ __('Save') }}
+            </x-primary-button>
 
             @if (session('status') === 'profile-updated')
                 <p

@@ -23,9 +23,14 @@ class StudentAccountController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', 'regex:/[A-Za-z]/', 'not_regex:/^\d+$/'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'name.regex' => 'Student name must include letters and cannot be only numbers.',
+            'name.not_regex' => 'Student name cannot be only numbers.',
+            'email.unique' => 'This email is already registered.',
+            'password.confirmed' => 'Password confirmation does not match.',
         ]);
 
         User::create([

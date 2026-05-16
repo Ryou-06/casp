@@ -128,17 +128,29 @@
                                             @endif
                                          </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <a href="{{ Storage::url($submission->file_path) }}"
-                                               target="_blank"
-                                               class="px-3 py-1 rounded text-xs font-medium transition-colors duration-150 inline-flex items-center gap-1"
-                                               style="background-color: #E6F1FB; color: #0C447C; border: 1px solid #B5D4F4;"
-                                               onmouseover="this.style.backgroundColor='#185FA5';this.style.color='white'"
-                                               onmouseout="this.style.backgroundColor='#E6F1FB';this.style.color='#0C447C'">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                                </svg>
-                                                Download
-                                            </a>
+                                            <div class="flex flex-wrap gap-2">
+                                                <a href="{{ route('teacher.submissions.view', $submission) }}"
+                                                   target="_blank"
+                                                   class="px-3 py-1 rounded text-xs font-medium transition-colors duration-150 inline-flex items-center gap-1"
+                                                   style="background-color: #E1F5EE; color: #0F6E56; border: 1px solid #B8E6D6;"
+                                                   onmouseover="this.style.backgroundColor='#0F6E56';this.style.color='white'"
+                                                   onmouseout="this.style.backgroundColor='#E1F5EE';this.style.color='#0F6E56'">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0A9 9 0 113 12a9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                    View
+                                                </a>
+                                                <a href="{{ route('teacher.submissions.download', $submission) }}"
+                                                   class="px-3 py-1 rounded text-xs font-medium transition-colors duration-150 inline-flex items-center gap-1"
+                                                   style="background-color: #E6F1FB; color: #0C447C; border: 1px solid #B5D4F4;"
+                                                   onmouseover="this.style.backgroundColor='#185FA5';this.style.color='white'"
+                                                   onmouseout="this.style.backgroundColor='#E6F1FB';this.style.color='#0C447C'">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                                    </svg>
+                                                    Download
+                                                </a>
+                                            </div>
                                          </td>
                                      </tr>
                                 @endforeach

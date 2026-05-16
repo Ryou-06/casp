@@ -67,14 +67,23 @@
                                             <span class="text-xs" style="color: #378ADD;">{{ $submission->submitted_at->diffForHumans() }}</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <a href="{{ Storage::url($submission->file_path) }}" 
-                                               target="_blank"
-                                               class="px-3 py-1 rounded text-xs font-medium transition-colors duration-150"
-                                               style="background-color: #E6F1FB; color: #0C447C; border: 1px solid #B5D4F4;"
-                                               onmouseover="this.style.backgroundColor='#185FA5';this.style.color='white'"
-                                               onmouseout="this.style.backgroundColor='#E6F1FB';this.style.color='#0C447C'">
-                                                Download
-                                            </a>
+                                            <div class="flex flex-wrap gap-2">
+                                                <a href="{{ route('teacher.submissions.view', $submission) }}"
+                                                   target="_blank"
+                                                   class="px-3 py-1 rounded text-xs font-medium transition-colors duration-150"
+                                                   style="background-color: #E1F5EE; color: #0F6E56; border: 1px solid #B8E6D6;"
+                                                   onmouseover="this.style.backgroundColor='#0F6E56';this.style.color='white'"
+                                                   onmouseout="this.style.backgroundColor='#E1F5EE';this.style.color='#0F6E56'">
+                                                    View
+                                                </a>
+                                                <a href="{{ route('teacher.submissions.download', $submission) }}"
+                                                   class="px-3 py-1 rounded text-xs font-medium transition-colors duration-150"
+                                                   style="background-color: #E6F1FB; color: #0C447C; border: 1px solid #B5D4F4;"
+                                                   onmouseover="this.style.backgroundColor='#185FA5';this.style.color='white'"
+                                                   onmouseout="this.style.backgroundColor='#E6F1FB';this.style.color='#0C447C'">
+                                                    Download
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach

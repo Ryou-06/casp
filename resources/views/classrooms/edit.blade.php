@@ -46,7 +46,11 @@
 
                         <!-- Footer Actions -->
                         <div class="mt-8 pt-6 border-t border-gray-100 flex items-center gap-3">
-                            <button type="submit"
+                            <button type="button"
+                                    data-confirm-form
+                                    data-confirm-title="Update classroom?"
+                                    data-confirm-message="This will save the changes to this classroom."
+                                    data-confirm-button="Save Changes"
                                     class="flex-1 px-6 py-3 rounded-xl text-white font-bold transition-all duration-200 shadow-md hover:brightness-110 active:scale-95"
                                     style="background-color: #185FA5;"
                                     onmouseover="this.style.backgroundColor='#0C447C'"

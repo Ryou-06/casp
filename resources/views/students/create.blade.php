@@ -40,20 +40,20 @@
                     <div>
                         <label for="name" class="block text-xs font-bold uppercase tracking-wider mb-2" style="color: #042C53;">Student Name</label>
                         <x-text-input id="name" name="name" type="text" class="block w-full" :value="old('name')" required autofocus />
-                        <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('name')" class="mt-2 text-xs font-bold text-red-500" />
                     </div>
 
                     <div>
                         <label for="email" class="block text-xs font-bold uppercase tracking-wider mb-2" style="color: #042C53;">Email</label>
                         <x-text-input id="email" name="email" type="email" class="block w-full" :value="old('email')" required autocomplete="username" />
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('email')" class="mt-2 text-xs font-bold text-red-500" />
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="password" class="block text-xs font-bold uppercase tracking-wider mb-2" style="color: #042C53;">Temporary Password</label>
                             <x-text-input id="password" name="password" type="text" class="block w-full" required autocomplete="new-password" />
-                            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                            <x-input-error :messages="$errors->get('password')" class="mt-2 text-xs font-bold text-red-500" />
                         </div>
 
                         <div>
@@ -62,7 +62,11 @@
                         </div>
                     </div>
 
-                    <button type="submit"
+                    <button type="button"
+                            data-confirm-form
+                            data-confirm-title="Create student account?"
+                            data-confirm-message="Please confirm the student credentials before creating the account."
+                            data-confirm-button="Create Account"
                             class="px-6 py-3 rounded-lg text-white font-bold shadow-sm transition-all hover:brightness-110"
                             style="background-color: #185FA5;">
                         Create Student Account

@@ -41,11 +41,11 @@ class ClassroomController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'section' => 'nullable|string|max:255',
-            'subject' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-        ]);
+            'name' => ['required', 'string', 'max:255', 'regex:/[A-Za-z]/', 'not_regex:/^\d+$/'],
+            'section' => ['nullable', 'string', 'max:255', 'regex:/[A-Za-z]/', 'not_regex:/^\d+$/'],
+            'subject' => ['nullable', 'string', 'max:255', 'regex:/[A-Za-z]/', 'not_regex:/^\d+$/'],
+            'description' => ['nullable', 'string', 'max:1000'],
+        ], $this->validationMessages());
 
         Classroom::create([
             ...$validated,
@@ -68,11 +68,11 @@ class ClassroomController extends Controller
         $this->authorizeTeacherClassroom($classroom);
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'section' => 'nullable|string|max:255',
-            'subject' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-        ]);
+            'name' => ['required', 'string', 'max:255', 'regex:/[A-Za-z]/', 'not_regex:/^\d+$/'],
+            'section' => ['nullable', 'string', 'max:255', 'regex:/[A-Za-z]/', 'not_regex:/^\d+$/'],
+            'subject' => ['nullable', 'string', 'max:255', 'regex:/[A-Za-z]/', 'not_regex:/^\d+$/'],
+            'description' => ['nullable', 'string', 'max:1000'],
+        ], $this->validationMessages());
 
         $classroom->update($validated);
 
@@ -122,13 +122,7 @@ class ClassroomController extends Controller
 
     public function studentIndex()
     {
-        $classrooms = Auth::user()
-            ->enrolledClassrooms()
-            ->withCount('assignments')
-            ->latest('classroom_student.created_at')
-            ->paginate(10);
-
-        return view('classrooms.student_index', compact('classrooms'));
+        return redirect()->route('student.dashboard');
     }
 
     public function studentShow(Classroom $classroom)
@@ -149,5 +143,18 @@ class ClassroomController extends Controller
         if ($classroom->teacher_id !== Auth::id()) {
             abort(403);
         }
+    }
+
+    private function validationMessages(): array
+    {
+        return [
+            'name.regex' => 'Classroom name must include letters and cannot be only numbers.',
+            'name.not_regex' => 'Classroom name cannot be only numbers.',
+            'section.regex' => 'Section must include letters, not only numbers.',
+            'section.not_regex' => 'Section cannot be only numbers.',
+            'subject.regex' => 'Subject must include letters, not only numbers.',
+            'subject.not_regex' => 'Subject cannot be only numbers.',
+            'description.max' => 'Description must not be longer than 1,000 characters.',
+        ];
     }
 }

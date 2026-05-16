@@ -92,10 +92,17 @@
                                                 </td>
                                                 <td class="px-6 py-4 text-sm text-gray-600 font-medium">{{ $student->email }}</td>
                                                 <td class="px-6 py-4 text-center">
-                                                    <form action="{{ route('classrooms.students.destroy', [$classroom, $student]) }}" method="POST" onsubmit="return confirm('Remove this student from the classroom?')">
+                                                    <form action="{{ route('classrooms.students.destroy', [$classroom, $student]) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="text-xs font-bold uppercase tracking-tighter hover:underline" style="color: #A32D2D;">
+                                                        <button type="button"
+                                                                data-confirm-form
+                                                                data-confirm-title="Remove student?"
+                                                                data-confirm-message="This will remove {{ $student->name }} from this classroom."
+                                                                data-confirm-button="Remove"
+                                                                data-confirm-tone="danger"
+                                                                class="text-xs font-bold uppercase tracking-tighter hover:underline"
+                                                                style="color: #A32D2D;">
                                                             Remove
                                                         </button>
                                                     </form>
@@ -135,13 +142,43 @@
                                                     <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 00-2 2z"></path></svg>
                                                     Due: {{ $assignment->due_date->format('M d, Y • h:i A') }}
                                                 </div>
+                                                @if($assignment->attachment_path)
+                                                    <a href="{{ route('assignments.attachment', $assignment) }}"
+                                                       class="inline-flex items-center gap-1 mt-2 text-xs font-bold text-blue-700 hover:underline">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                                                        </svg>
+                                                        {{ $assignment->attachment_name }}
+                                                    </a>
+                                                @endif
                                             </div>
                                         </div>
-                                        <a href="{{ route('teacher.submissions', $assignment) }}" 
-                                           class="px-4 py-2 rounded-lg text-sm font-bold transition-all border-2 border-transparent hover:bg-gray-100 text-center" 
-                                           style="color: #185FA5; background-color: #F0F7FF;">
-                                            View Submissions
-                                        </a>
+                                        <div class="flex flex-wrap items-center gap-2 shrink-0">
+                                            <a href="{{ route('teacher.submissions', $assignment) }}"
+                                               class="px-4 py-2 rounded-lg text-sm font-bold transition-all border-2 border-transparent hover:bg-gray-100 text-center"
+                                               style="color: #185FA5; background-color: #F0F7FF;">
+                                                View Submissions
+                                            </a>
+                                            <a href="{{ route('assignments.edit', $assignment) }}"
+                                               class="px-4 py-2 rounded-lg text-sm font-bold transition-all border-2 border-transparent hover:bg-gray-100 text-center"
+                                               style="color: #B7791F; background-color: #FFF9E6;">
+                                                Update Deadline
+                                            </a>
+                                            <form action="{{ route('assignments.destroy', $assignment) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button"
+                                                        data-confirm-form
+                                                        data-confirm-title="Delete activity?"
+                                                        data-confirm-message="This will delete {{ $assignment->title }} and its uploaded submissions."
+                                                        data-confirm-button="Delete"
+                                                        data-confirm-tone="danger"
+                                                        class="px-4 py-2 rounded-lg text-sm font-bold transition-all hover:bg-red-50"
+                                                        style="color: #A32D2D; background-color: #FCEBEB;">
+                                                    Delete Post
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
@@ -177,7 +214,13 @@
                                 @enderror
                             </div>
 
-                            <button type="submit" class="w-full py-3 rounded-xl text-white font-bold shadow-lg transition-all hover:brightness-110 active:scale-95 flex items-center justify-center gap-2" style="background-color: #185FA5;">
+                            <button type="button"
+                                    data-confirm-form
+                                    data-confirm-title="Add student?"
+                                    data-confirm-message="This will enroll the selected student in this classroom."
+                                    data-confirm-button="Add Student"
+                                    class="w-full py-3 rounded-xl text-white font-bold shadow-lg transition-all hover:brightness-110 active:scale-95 flex items-center justify-center gap-2"
+                                    style="background-color: #185FA5;">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
                                 Add to Classroom
                             </button>

@@ -98,10 +98,17 @@
                                                 <div class="flex justify-end items-center gap-4">
                                                     <a href="{{ route('classrooms.show', $classroom) }}" class="text-xs font-bold uppercase hover:opacity-70" style="color: #185FA5;">Open</a>
                                                     <a href="{{ route('classrooms.edit', $classroom) }}" class="text-xs font-bold uppercase hover:opacity-70" style="color: #B7791F;">Edit</a>
-                                                    <form action="{{ route('classrooms.destroy', $classroom) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this classroom?')">
+                                                    <form action="{{ route('classrooms.destroy', $classroom) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="text-xs font-bold uppercase hover:opacity-70" style="color: #A32D2D;">Delete</button>
+                                                        <button type="button"
+                                                                data-confirm-form
+                                                                data-confirm-title="Delete classroom?"
+                                                                data-confirm-message="This will delete {{ $classroom->name }} and its classroom records."
+                                                                data-confirm-button="Delete"
+                                                                data-confirm-tone="danger"
+                                                                class="text-xs font-bold uppercase hover:opacity-70"
+                                                                style="color: #A32D2D;">Delete</button>
                                                     </form>
                                                 </div>
                                             </td>

@@ -40,12 +40,13 @@ class AssignmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'classroom_id' => 'required|exists:classrooms,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'subject' => 'nullable|string|max:255',
-            'due_date' => 'required|date|after:now',
-        ]);
+            'classroom_id' => ['required', 'integer', 'exists:classrooms,id'],
+            'title' => ['required', 'string', 'max:255', 'regex:/[A-Za-z]/', 'not_regex:/^\d+$/'],
+            'description' => ['required', 'string', 'min:10', 'max:5000'],
+            'subject' => ['nullable', 'string', 'max:255', 'regex:/[A-Za-z]/', 'not_regex:/^\d+$/'],
+            'due_date' => ['required', 'date', 'after:now'],
+            'attachment' => ['nullable', 'file', 'max:512000'],
+        ], $this->validationMessages());
 
         $classroom = Classroom::where('teacher_id', Auth::id())->findOrFail($request->classroom_id);
         $subject = $classroom->subject ?: $request->subject;
@@ -56,6 +57,8 @@ class AssignmentController extends Controller
                 ->withInput();
         }
 
+        $attachment = $this->storeAttachment($request, null);
+
         Assignment::create([
             'teacher_id' => Auth::id(),
             'classroom_id' => $classroom->id,
@@ -63,6 +66,7 @@ class AssignmentController extends Controller
             'description' => $request->description,
             'subject' => $subject,
             'due_date' => $request->due_date,
+            ...$attachment,
         ]);
 
         return redirect()->route('classrooms.show', $classroom)
@@ -108,12 +112,13 @@ class AssignmentController extends Controller
         }
         
         $request->validate([
-            'classroom_id' => 'required|exists:classrooms,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'subject' => 'nullable|string|max:255',
-            'due_date' => 'required|date',
-        ]);
+            'classroom_id' => ['required', 'integer', 'exists:classrooms,id'],
+            'title' => ['required', 'string', 'max:255', 'regex:/[A-Za-z]/', 'not_regex:/^\d+$/'],
+            'description' => ['required', 'string', 'min:10', 'max:5000'],
+            'subject' => ['nullable', 'string', 'max:255', 'regex:/[A-Za-z]/', 'not_regex:/^\d+$/'],
+            'due_date' => ['required', 'date', 'after:now'],
+            'attachment' => ['nullable', 'file', 'max:512000'],
+        ], $this->validationMessages());
 
         $classroom = Classroom::where('teacher_id', Auth::id())->findOrFail($request->classroom_id);
         $subject = $classroom->subject ?: $request->subject;
@@ -124,12 +129,15 @@ class AssignmentController extends Controller
                 ->withInput();
         }
 
+        $attachment = $this->storeAttachment($request, $assignment);
+
         $assignment->update([
             'classroom_id' => $classroom->id,
             'title' => $request->title,
             'description' => $request->description,
             'subject' => $subject,
             'due_date' => $request->due_date,
+            ...$attachment,
         ]);
 
         return redirect()->route('classrooms.show', $assignment->classroom)
@@ -155,10 +163,85 @@ class AssignmentController extends Controller
         
         $classroom = $assignment->classroom;
 
+        $this->deleteAttachment($assignment);
+
         $assignment->delete();
         
         return $classroom
             ? redirect()->route('classrooms.show', $classroom)->with('success', 'Assignment deleted successfully.')
             : redirect()->route('assignments.index')->with('success', 'Assignment deleted successfully.');
+    }
+
+    private function validationMessages(): array
+    {
+        return [
+            'title.regex' => 'Assignment title must include letters and cannot be only numbers.',
+            'title.not_regex' => 'Assignment title cannot be only numbers.',
+            'description.min' => 'Instructions should be at least 10 characters.',
+            'description.max' => 'Instructions must not be longer than 5,000 characters.',
+            'subject.regex' => 'Subject must include letters, not only numbers.',
+            'subject.not_regex' => 'Subject cannot be only numbers.',
+            'due_date.after' => 'Deadline must be a future date and time.',
+            'attachment.file' => 'Attachment must be a valid file.',
+            'attachment.max' => 'Attachment must not be greater than 500MB.',
+        ];
+    }
+
+    public function downloadAttachment(Assignment $assignment)
+    {
+        $user = Auth::user();
+
+        if ($user->isTeacher()) {
+            if ($assignment->teacher_id !== $user->id) {
+                abort(403);
+            }
+        } elseif ($user->isStudent()) {
+            $isEnrolled = $assignment->classroom()
+                ->whereHas('students', function ($query) use ($user) {
+                    $query->where('users.id', $user->id);
+                })
+                ->exists();
+
+            if (! $isEnrolled) {
+                abort(403);
+            }
+        } else {
+            abort(403);
+        }
+
+        if (! $assignment->attachment_path || ! Storage::disk('public')->exists($assignment->attachment_path)) {
+            abort(404);
+        }
+
+        return Storage::disk('public')->download($assignment->attachment_path, $assignment->attachment_name);
+    }
+
+    private function storeAttachment(Request $request, ?Assignment $assignment): array
+    {
+        if (! $request->hasFile('attachment')) {
+            return [];
+        }
+
+        if ($assignment) {
+            $this->deleteAttachment($assignment);
+        }
+
+        $file = $request->file('attachment');
+        $originalName = $file->getClientOriginalName();
+        $filename = time().'_'.Auth::id().'_'.preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalName);
+        $path = $file->storeAs('assignment-attachments', $filename, 'public');
+
+        return [
+            'attachment_path' => $path,
+            'attachment_name' => $originalName,
+            'attachment_size' => $file->getSize(),
+        ];
+    }
+
+    private function deleteAttachment(Assignment $assignment): void
+    {
+        if ($assignment->attachment_path && Storage::disk('public')->exists($assignment->attachment_path)) {
+            Storage::disk('public')->delete($assignment->attachment_path);
+        }
     }
 }

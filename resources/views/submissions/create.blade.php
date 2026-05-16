@@ -81,6 +81,24 @@
                                     </div>
                                 </div>
                             @endif
+
+                            @if($assignment->attachment_path)
+                                <div class="mt-6">
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Activity File</p>
+                                    <a href="{{ route('assignments.attachment', $assignment) }}"
+                                       class="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100 hover:border-blue-200 hover:bg-blue-50/40 transition">
+                                        <div class="text-blue-500 bg-white p-2 rounded-lg shadow-sm">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-bold text-gray-700 truncate">{{ $assignment->attachment_name }}</p>
+                                            <p class="text-[10px] text-blue-600 font-bold uppercase">Download teacher file</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -165,7 +183,11 @@
                             </div>
 
                             <div class="flex gap-3 pt-2">
-                                <button type="submit"
+                                <button type="button"
+                                        data-confirm-form
+                                        data-confirm-title="{{ $existing ? 'Update submission?' : 'Submit assignment?' }}"
+                                        data-confirm-message="{{ $existing ? 'This will replace your current uploaded file for this assignment.' : 'Please confirm that you want to hand in this file.' }}"
+                                        data-confirm-button="{{ $existing ? 'Update Work' : 'Hand In' }}"
                                         class="flex-[2] px-6 py-3 rounded-xl text-white text-xs font-black uppercase tracking-widest transition-all duration-300 bg-blue-600 hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 shadow-md">
                                     {{ $existing ? 'Update My Work' : 'Hand In Assignment' }}
                                 </button>

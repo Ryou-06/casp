@@ -32,6 +32,78 @@ test('student cannot access classroom creation', function () {
     $response->assertForbidden();
 });
 
+test('teacher can read their classroom details', function () {
+    $teacher = User::factory()->create(['role' => 'teacher']);
+    $classroom = Classroom::create([
+        'teacher_id' => $teacher->id,
+        'name' => 'Grade 10 - Rizal',
+        'section' => 'Section A',
+        'subject' => 'Mathematics',
+        'description' => 'Morning class',
+    ]);
+
+    $response = $this->actingAs($teacher)->get(route('classrooms.show', $classroom));
+
+    $response->assertOk();
+    $response->assertSee('Grade 10 - Rizal');
+    $response->assertSee('Mathematics');
+});
+
+test('teacher can update their classroom', function () {
+    $teacher = User::factory()->create(['role' => 'teacher']);
+    $classroom = Classroom::create([
+        'teacher_id' => $teacher->id,
+        'name' => 'Old Classroom',
+        'section' => 'Section A',
+        'subject' => 'Mathematics',
+    ]);
+
+    $response = $this->actingAs($teacher)->put(route('classrooms.update', $classroom), [
+        'name' => 'Updated Classroom',
+        'section' => 'Section B',
+        'subject' => 'Science',
+        'description' => '',
+    ]);
+
+    $response->assertRedirect(route('classrooms.index'));
+
+    $this->assertDatabaseHas('classrooms', [
+        'id' => $classroom->id,
+        'name' => 'Updated Classroom',
+        'section' => 'Section B',
+        'subject' => 'Science',
+        'description' => null,
+    ]);
+});
+
+test('teacher can delete their classroom', function () {
+    $teacher = User::factory()->create(['role' => 'teacher']);
+    $classroom = Classroom::create([
+        'teacher_id' => $teacher->id,
+        'name' => 'Classroom To Delete',
+    ]);
+
+    $response = $this->actingAs($teacher)->delete(route('classrooms.destroy', $classroom));
+
+    $response->assertRedirect(route('classrooms.index'));
+    $this->assertDatabaseMissing('classrooms', [
+        'id' => $classroom->id,
+    ]);
+});
+
+test('classroom name cannot be only numbers', function () {
+    $teacher = User::factory()->create(['role' => 'teacher']);
+
+    $response = $this->actingAs($teacher)->post(route('classrooms.store'), [
+        'name' => '12345',
+        'section' => 'Section A',
+        'subject' => 'Mathematics',
+        'description' => '',
+    ]);
+
+    $response->assertSessionHasErrors('name');
+});
+
 test('teacher cannot edit another teachers classroom', function () {
     $teacher = User::factory()->create(['role' => 'teacher']);
     $otherTeacher = User::factory()->create(['role' => 'teacher']);
@@ -102,4 +174,12 @@ test('student only sees assignments from enrolled classrooms', function () {
     $response->assertOk();
     $response->assertSee($visibleAssignment->title);
     $response->assertDontSee('Hidden Activity');
+});
+
+test('student classrooms index redirects to dashboard classroom list', function () {
+    $student = User::factory()->create(['role' => 'student']);
+
+    $response = $this->actingAs($student)->get(route('student.classrooms.index'));
+
+    $response->assertRedirect(route('student.dashboard'));
 });

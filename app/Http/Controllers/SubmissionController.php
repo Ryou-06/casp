@@ -53,7 +53,11 @@ public function store(Request $request, Assignment $assignment)
     
     // Validate
     $request->validate([
-        'file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip,rar,jpg,jpeg,png|max:512000',
+        'file' => 'required|file|max:512000',
+    ], [
+        'file.required' => 'Please choose a file before submitting.',
+        'file.file' => 'The selected upload must be a valid file.',
+        'file.max' => 'File size must not be greater than 500MB.',
     ]);
     
     // Remove the past due blocking check - allow submissions always
@@ -164,6 +168,30 @@ public function allSubmissionsHistory()
     return view('submissions.history', compact('submissions'));
 }
 
+public function viewSubmissionFile(Submission $submission)
+{
+    $this->ensureTeacherCanAccessSubmission($submission);
+
+    if (! Storage::disk('public')->exists($submission->file_path)) {
+        abort(404);
+    }
+
+    return Storage::disk('public')->response($submission->file_path, $submission->file_name, [
+        'Content-Disposition' => 'inline; filename="'.$submission->file_name.'"',
+    ]);
+}
+
+public function downloadSubmissionFile(Submission $submission)
+{
+    $this->ensureTeacherCanAccessSubmission($submission);
+
+    if (! Storage::disk('public')->exists($submission->file_path)) {
+        abort(404);
+    }
+
+    return Storage::disk('public')->download($submission->file_path, $submission->file_name);
+}
+
     private function ensureStudentCanAccessAssignment(Assignment $assignment): void
     {
         $student = Auth::user();
@@ -180,6 +208,13 @@ public function allSubmissionsHistory()
 
         if (! $isEnrolled) {
             abort(403, 'You are not enrolled in the classroom for this assignment.');
+        }
+    }
+
+    private function ensureTeacherCanAccessSubmission(Submission $submission): void
+    {
+        if (Auth::user()->role !== 'teacher' || $submission->assignment->teacher_id !== Auth::id()) {
+            abort(403, 'You do not have permission to view this submission.');
         }
     }
 }

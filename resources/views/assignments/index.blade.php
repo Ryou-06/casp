@@ -96,6 +96,14 @@
                                             <div class="flex flex-col max-w-[280px]">
                                                 <span class="text-base font-black text-slate-900 group-hover:text-blue-600 transition-colors">{{ $assignment->title }}</span>
                                                 <span class="text-xs font-medium text-slate-400 mt-1 line-clamp-1 italic">{{ $assignment->description ?: 'No description provided.' }}</span>
+                                                @if($assignment->attachment_path)
+                                                    <a href="{{ route('assignments.attachment', $assignment) }}" class="inline-flex items-center gap-1 mt-2 text-xs font-bold text-blue-700 hover:underline">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                                                        </svg>
+                                                        {{ $assignment->attachment_name }}
+                                                    </a>
+                                                @endif
                                             </div>
                                         </td>
                                         <td class="px-6 py-8 text-center sm:text-left">
@@ -139,11 +147,16 @@
                                                 
                                                 <form action="{{ route('assignments.destroy', $assignment) }}" 
                                                       method="POST" 
-                                                      onsubmit="return confirm('Archive this assignment?')"
                                                       class="inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="h-10 w-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-red-600 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300">
+                                                    <button type="button"
+                                                            data-confirm-form
+                                                            data-confirm-title="Delete assignment?"
+                                                            data-confirm-message="This will delete {{ $assignment->title }} and its uploaded submissions."
+                                                            data-confirm-button="Delete"
+                                                            data-confirm-tone="danger"
+                                                            class="h-10 w-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-red-600 hover:border-red-200 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300">
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                     </button>
                                                 </form>

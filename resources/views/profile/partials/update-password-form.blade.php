@@ -32,7 +32,13 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            <x-primary-button type="button"
+                              data-confirm-form
+                              data-confirm-title="Update password?"
+                              data-confirm-message="This will change the password used to log in to CASP."
+                              data-confirm-button="Save Password">
+                {{ __('Save') }}
+            </x-primary-button>
 
             @if (session('status') === 'password-updated')
                 <p

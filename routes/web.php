@@ -34,7 +34,12 @@ Route::middleware(['auth'])->group(function () {
         // Teacher submission routes
         Route::get('/teacher/submissions/history', [SubmissionController::class, 'allSubmissionsHistory'])->name('teacher.submissions.history');
         Route::get('/teacher/submissions/{assignment}', [SubmissionController::class, 'showSubmissionsForTeacher'])->name('teacher.submissions');
+        Route::get('/teacher/submission-files/{submission}/view', [SubmissionController::class, 'viewSubmissionFile'])->name('teacher.submissions.view');
+        Route::get('/teacher/submission-files/{submission}/download', [SubmissionController::class, 'downloadSubmissionFile'])->name('teacher.submissions.download');
     });
+
+    Route::get('/assignments/{assignment}/attachment', [AssignmentController::class, 'downloadAttachment'])
+        ->name('assignments.attachment');
 
     // Student routes
     Route::middleware(['role:student'])->group(function () {

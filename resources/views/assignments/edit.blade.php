@@ -9,7 +9,7 @@
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <form action="{{ route('assignments.update', $assignment) }}" method="POST">
+                    <form action="{{ route('assignments.update', $assignment) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PATCH')
 
@@ -63,14 +63,37 @@
                             <label class="block text-gray-700 font-medium mb-1">Due Date</label>
                             <input type="datetime-local" name="due_date"
                                    value="{{ old('due_date', $assignment->due_date->format('Y-m-d\TH:i')) }}"
+                                   min="{{ now()->addMinute()->format('Y-m-d\TH:i') }}"
                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                             @error('due_date')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
+                        <div class="mb-6">
+                            <label class="block text-gray-700 font-medium mb-1">Activity File <span class="text-xs text-gray-400">(optional)</span></label>
+                            @if($assignment->attachment_path)
+                                <div class="mb-3 p-3 rounded-lg border border-blue-100 bg-blue-50 text-sm">
+                                    <p class="font-semibold text-blue-900">{{ $assignment->attachment_name }}</p>
+                                    <a href="{{ route('assignments.attachment', $assignment) }}" class="text-xs font-bold text-blue-700 underline">
+                                        Download current file
+                                    </a>
+                                </div>
+                            @endif
+                            <input type="file" name="attachment"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <p class="text-xs text-gray-500 mt-1">Uploading a new file will replace the current attachment.</p>
+                            @error('attachment')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <div class="flex gap-3">
-                            <button type="submit"
+                            <button type="button"
+                                    data-confirm-form
+                                    data-confirm-title="Update assignment?"
+                                    data-confirm-message="This will save the changes to this assignment."
+                                    data-confirm-button="Update Assignment"
                                     class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
                                 Update Assignment
                             </button>
